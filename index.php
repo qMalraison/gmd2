@@ -18,6 +18,10 @@ use PhpObo\LineReader, PhpObo\Parser;
 
 
 $NomSymptome = $_GET["Symptome"];
+
+// List de tout les synonyms alimenter par hp.obo
+$listSynonym = array($NomSymptome);
+
 /*
 
 require_once "obohpo.php";

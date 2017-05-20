@@ -15,7 +15,6 @@ $parser->parse();
 //loop through Term stanzas to find obsolete terms
 
 
-$listSynonym = array($NomSymptome);
 
 $terms = array_filter($parser->getDocument()->getStanzas('Term'), function($stanza) {
     return (!isset($stanza['is_obsolete']) & isset($stanza['synonym']) &  (stripos($stanza['name'], $_GET["Symptome"]) !== false)  );
