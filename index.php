@@ -89,16 +89,6 @@ foreach ($result as &$value) {
 // Stitch
 
 /*
-//Open the file.
-$fileHandle = fopen("chemical.sources.v5.0.tsv", "r");
-
-//Loop through the CSV rows.
-while (($row = fgetcsv($fileHandle, 0, "	")) !== FALSE) {
-    //Dump out the row for the sake of clarity.
-    var_dump($row);
-}
-
-/*
 // MySQL SIde
 $servername = "neptune.telecomnancy.univ-lorraine.fr";
 $username = "gmd-read";
@@ -194,7 +184,7 @@ $config = array(
 );
 // new Solarium Client object
 $client = new Solarium\Client($config);
-
+/* CGARGEMENT index
 // 2. Stitch Parsing file
 
 //Open the file.
@@ -221,7 +211,7 @@ while (($row = fgetcsv($fileHandle, 0, "	")) !== FALSE) {
 
 
 }
-
+*/
 $query = $client->createSelect();
 
 // *:* is equivalent to telling solr to return all docs
