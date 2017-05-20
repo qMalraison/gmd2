@@ -15,220 +15,23 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\CouchDB\HTTP\SocketClient;
 use PhpObo\LineReader, PhpObo\Parser;
 
-$paths = array("/path/to/entity-files");
-$isDevMode = false;
+
 
 $NomSymptome = $_GET["Symptome"];
-
-// the connection configuration
-
-$handle = fopen('hp.obo', 'r');
-$lineReader = new LineReader($handle);
-
-//parse file
-$parser = new Parser($lineReader);
-$parser->retainTrailingComments(true);
-$parser->getDocument()->mergeStanzas(false); //speed tip
-$parser->parse();
-//loop through Term stanzas to find obsolete terms
-
-
-$listSynonym = array($NomSymptome);
-
-$terms = array_filter($parser->getDocument()->getStanzas('Term'), function($stanza) {
-    return (!isset($stanza['is_obsolete']) & isset($stanza['synonym']) &  (stripos($stanza['name'], $_GET["Symptome"]) !== false)  );
-});
-foreach ($terms as $term) {
-  foreach ($term['synonym'] as $synonym) {
-
-    preg_match('#\"(.*?)\"#', $synonym, $parse);
-
-            array_push($listSynonym , $parse[1]);
-  }
-
-}
-
-$listSynonym = array_unique($listSynonym);
-
-var_dump($listSynonym);
-
-echo "<br>HPO<br>";
-
-// fichier hpo_annotations.sqlite
-$dir = 'sqlite:hpo_annotations.sqlite';
-$dbh  = new PDO($dir) or die("cannot open the database");
-$query =  "SELECT * FROM phenotype_annotation";
-foreach ($dbh->query($query) as $row)
-{
-    //var_dump($row);
-    break;
-}
-
-
-
-
-// ORPHA
-
 /*
-$client = \Doctrine\CouchDB\CouchDBClient::create(array('dbname' => 'orphadatabase',
-                                                        'port' => '80',
-                                                        'host' => 'couchdb.telecomnancy.univ-lorraine.fr') );
 
+require_once "obohpo.php";
 
+require_once "orpha.php";
 
-$query = $client->createViewQuery('clinicalsigns', 'GetDiseaseByClinicalSign');
-$result = $query->setKeys($listSynonym)->execute();
+require_once "sider.php";
 
-foreach ($result as &$value) {
-    print($value['value']['disease']['Name']['text']);
-    print("<br>");
-}
+require_once "omim.php";
 
-
-
-// Stitch
-
-/*
-// MySQL SIde
-$servername = "neptune.telecomnancy.univ-lorraine.fr";
-$username = "gmd-read";
-$password = "esial";
-$dbname = "gmd";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-$sql = "SELECT * FROM meddra_all_se where side_effect_name LIKE";
-
-foreach ($listSynonym as &$value) {
-    $sql = $sql."side_effect_name LIKE '%".$value."%' OR ";
-}
-
-$sql = substr($sql, 0, -3);
-$sql = $sql." GROUP BY cui";
-
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    echo "<table><tr><th>ID</th><th>Name</th></tr>";
-    // output data of each row
-    while($row = $result->fetch_assoc()) {
-        echo "<tr><td>".$row["cui"]."</td><td>".$row["side_effect_name"]."</td></tr>";
-    }
-    echo "</table>";
-} else {
-    echo "0 results";
-}
-$conn->close();
-
+require_once "stitch.php";
 
 */
-// ONIM
-
-echo "debut<br>";
-
-$onimResult = array();
-
-$handle = @fopen("omim.txt", "r");
-if ($handle) {
-    while (($buffer = fgets($handle, 4096)) !== false) {
-
-      if ($buffer  == "*FIELD* TI\n"){
-
-        if(($buffer = fgets($handle, 4096)) !== false){
-          $lastMaladie = $buffer;
-
-        }
-      }
-
-      if ($buffer  == "*FIELD* CS\n"){
-
-          while (($buffer = fgets($handle, 4096)) !== false) {
-              if ($buffer  == "*FIELD* TI\n"){
-                break;
-              }
-
-              $found = false;
-              foreach ($listSynonym as &$NomSymptome) {
-                if(stripos($buffer, $NomSymptome) !== false){
-
-                  $onimRow = array($lastMaladie,$buffer);
-                  array_push($onimResult , $onimRow);
-                  $found = true;
-                  break;
-                }
-              }
-              if ($found) {
-                break;
-              }
-
-          }
-      }
-    }
-    fclose($handle);
-}
-
-
-// STITCH
-
-//1. Connecting to Solr
-$config = array(
-    'endpoint' => array(
-        'localhost' => array(
-            'host' => '127.0.0.1', 'port' => '8983', 'path' => '/solr/', 'core' => 'stitch'
-        )
-    )
-);
-// new Solarium Client object
-$client = new Solarium\Client($config);
-/* CGARGEMENT index
-// 2. Stitch Parsing file
-
-//Open the file.
-$fileHandle = fopen("chemical.sources.v5.0.tsv", "r");
-//Loop through the CSV rows.
-
-$i=0;
-while (($row = fgetcsv($fileHandle, 0, "	")) !== FALSE) {
-    //Creating docuemnt to index with Solr
-    //var_dump($row);
-
-
-    if(strcmp($row[2], "ATC")==0) {
-      $update = $client->createUpdate();
-      $doc1 = $update->createDocument();
-
-      $doc1->id = $row[0];
-      $doc1->atc_id = $row[3];
-
-      $update->addDocument($doc1);
-      $update->addCommit();
-      $client->update($update);
-    }
-
-
-}
-*/
-$query = $client->createSelect();
-
-// *:* is equivalent to telling solr to return all docs
-$query->setQuery('id:CIDm00002194');
-$query->setFields(array('id','atc_id'));
-
-
-$resultSet = $client->select($query);
-
-echo '<div class="search-results">';
-foreach ($resultSet as $result) {
-    echo '<div class="search-result">';
-    echo '<p>' . $result->id . '</p>';
-    print_r($result->atc_id);
-    echo '</div>';
-}
-echo '</div>';
+require_once "atc.php";
 
 
 ?>
