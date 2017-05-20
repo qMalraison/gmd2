@@ -1,0 +1,4 @@
+*.tsv
+*.sqlite
+*.obo
+omim.txt
