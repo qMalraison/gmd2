@@ -153,7 +153,7 @@ class Curl extends Configurable implements AdapterInterface
         }
 
         if (!isset($options['headers']['Content-Type'])) {
-            $options['headers']['Content-Type'] = 'text/xml; charset=utf-8';
+            $options['headers']['Content-Type'] = '';
         }
 
         $authData = $request->getAuthentication();
