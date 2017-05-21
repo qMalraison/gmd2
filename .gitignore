@@ -2,4 +2,5 @@
 *.sqlite
 *.obo
 *.keg
+*.csv
 omim.txt

@@ -29,14 +29,14 @@ require_once "obohpo.php";
 require_once "orpha.php";
 
 require_once "sider.php";
-
+*/
 require_once "omim.php";
-
+/*
 require_once "stitch.php";
 
-*/
-require_once "atc.php";
 
+require_once "atc.php";
+*/
 
 ?>
 
@@ -76,6 +76,7 @@ require_once "atc.php";
           <th>Cause</th>
           <th>CUID</th>
           <th>ClinicalSign</th>
+          <th>Show list med</th>
       </tr>
   </thead>
   <tfoot>
@@ -84,7 +85,8 @@ require_once "atc.php";
         <th>Type</th>
         <th>Cause</th>
         <th>CUID</th>
-        <th>ClinicalSign  </th>
+        <th>ClinicalSign </th>
+        <th>Show list med</th>
       </tr>
   </tfoot>
   <tbody>
@@ -103,6 +105,7 @@ require_once "atc.php";
                 <td>".$value[0]."</td>
                 <td>-</td>
                 <td>".$value[1]."</td>
+                <td><a href=\"listMed.php?db=ONIM&name=".urlencode($value[0])."\">link</a></td>
               </tr>");
     }
 
