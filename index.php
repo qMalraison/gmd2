@@ -1,10 +1,5 @@
 <?php
-/*error_reporting(E_ALL);
-ini_set('xdebug.var_display_max_depth', -1);
-ini_set('xdebug.var_display_max_children', -1);
-ini_set('xdebug.var_display_max_data', -1);
-ini_set('memory_limit', '2048M');*/
-set_time_limit(0);
+error_reporting(0);
 // bootstrap.php
 require_once "vendor/autoload.php";
 require_once "PhpObo/LineReader.php";
@@ -22,21 +17,18 @@ $NomSymptome = $_GET["Symptome"];
 // List de tout les synonyms alimenter par hp.obo
 $listSynonym = array($NomSymptome);
 
-/*
+
 
 require_once "obohpo.php";
 
 require_once "orpha.php";
 
-require_once "sider.php";
-*/
 require_once "omim.php";
-/*
-require_once "stitch.php";
+
+require_once "getDrugsSE.php";
 
 
-require_once "atc.php";
-*/
+
 
 ?>
 
@@ -68,7 +60,7 @@ require_once "atc.php";
 
     </div>
 
-    <table id="example" class="display" width="100%" cellspacing="0">
+    <table id="deseas" class="display" width="100%" cellspacing="0">
       <thead>
       <tr>
           <th>Database</th>
@@ -109,9 +101,52 @@ require_once "atc.php";
               </tr>");
     }
 
+
+    foreach ($resultOrpha as &$value) {
+
+        print("<tr>
+                <td>Orpha</td>
+                <td>Disease</td>
+                <td>".$value['Name']['text']."</td>
+                <td>-</td>
+                <td>".$listSynonym[0]."</td>
+                <td><a href=\"listMed.php?db=Orpha&name=".urlencode($value['OrphaNumber'])."\">link</a></td>
+              </tr>");
+    }
+
      ?>
 
    </tbody>
+  </table>
+
+  <table id="drugsSE" class="display" width="100%" cellspacing="0">
+    <thead>
+      <tr>
+        <th>Drugs causing side effects</th>
+        <th>Show list med</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>Drugs causing side effects</th>
+        <th>Show list med</th>
+      </tr>
+    </tfoot>
+    <tbody>
+
+      <?php
+
+      // Tab ONIM
+      foreach ($medicamentSEList as &$value) {
+
+        print("<tr>
+        <td>".$value."</td>
+        <td><a href=\"listMed.php?db=ONIM&name=".urlencode($value[0])."\">link</a></td>
+        </tr>");
+      }
+      ?>
+
+    </tbody>
   </table>
 
 
@@ -122,7 +157,8 @@ require_once "atc.php";
     <script src="js\jquery.dataTables.min.js"></script>
     <script type="text/javascript">
     $(document).ready(function() {
-      $('#example').DataTable();
+      $('#deseas').DataTable();
+      $('#drugsSE').DataTable();
     } );
     </script>
 </html>
