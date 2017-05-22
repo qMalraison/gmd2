@@ -31,9 +31,7 @@ foreach ($terms as $term) {
 
 $listSynonym = array_unique($listSynonym);
 
-var_dump($listSynonym);
 
-echo "<br>HPO<br>";
 
 // fichier hpo_annotations.sqlite
 $dir = 'sqlite:hpo_annotations.sqlite';

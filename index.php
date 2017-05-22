@@ -56,6 +56,17 @@ require_once "getDrugsSE.php";
           Symptome <input type="text" name="Symptome" value="" size="50">
             </form>
         </div>
+
+          <div class="col-12">
+            <?php
+              foreach ($listSynonym as &$value) {
+              print("<span>
+                      ".$value." //
+                    </span>");
+                }
+
+             ?>
+          </div>
       </div>
 
     </div>
@@ -66,7 +77,7 @@ require_once "getDrugsSE.php";
           <th>Database</th>
           <th>Type</th>
           <th>Cause</th>
-          <th>CUID</th>
+
           <th>ClinicalSign</th>
           <th>Show list med</th>
       </tr>
@@ -76,7 +87,7 @@ require_once "getDrugsSE.php";
         <th>Database</th>
         <th>Type</th>
         <th>Cause</th>
-        <th>CUID</th>
+
         <th>ClinicalSign </th>
         <th>Show list med</th>
       </tr>
@@ -95,9 +106,8 @@ require_once "getDrugsSE.php";
                 <td>ONIM</td>
                 <td>Disease</td>
                 <td>".$value[0]."</td>
-                <td>-</td>
                 <td>".$value[1]."</td>
-                <td><a href=\"listMed.php?db=ONIM&name=".urlencode($value[0])."\">link</a></td>
+                <td><a href=\"getDrugsIndicated.php?list=".urlencode(implode(",", $listSynonym))."\">link</a></td>
               </tr>");
     }
 
@@ -110,7 +120,7 @@ require_once "getDrugsSE.php";
                 <td>".$value['Name']['text']."</td>
                 <td>-</td>
                 <td>".$listSynonym[0]."</td>
-                <td><a href=\"listMed.php?db=Orpha&name=".urlencode($value['OrphaNumber'])."\">link</a></td>
+                <td><a href=\"getDrugsIndicated.php?list=".urlencode(implode(",", $listSynonym))."\">link</a></td>
               </tr>");
     }
 
@@ -141,7 +151,7 @@ require_once "getDrugsSE.php";
 
         print("<tr>
         <td>".$value."</td>
-        <td><a href=\"listMed.php?db=ONIM&name=".urlencode($value[0])."\">link</a></td>
+        <td><a href=\"getDrugsIndicated.php?list=".urlencode(implode(",", $listSynonym))."\">link</a></td>
         </tr>");
       }
       ?>

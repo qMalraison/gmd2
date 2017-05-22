@@ -1,4 +1,17 @@
 <?php
+error_reporting(0);
+require_once "vendor/autoload.php";
+require_once "PhpObo/LineReader.php";
+require_once "PhpObo/Parser.php";
+
+use Doctrine\ORM\Tools\Setup;
+use Doctrine\ORM\EntityManager;
+use Doctrine\CouchDB\HTTP\SocketClient;
+use PhpObo\LineReader, PhpObo\Parser;
+
+
+$listSynonymForDrugs = explode(",",$_GET["list"]);
+
 
 
 // MySQL SIDER
@@ -20,8 +33,12 @@ foreach ($listSynonymForDrugs as &$value) {
 }
 $sql = substr($sql, 0, -1);
 $sql = $sql.")";
+
+
 // getting Sider elements
 $resultSider = $conn->query($sql);
+
+
 
 
 // For all Sider results get Atc ids
@@ -30,7 +47,7 @@ if ($resultSider->num_rows > 0) {
     //echo "<table><tr><th>ID</th><th>Name</th></tr>";
     // output data of each row
     while($row = $resultSider->fetch_assoc()) {
-      $idSt = $row["stitch_compound_id1"];
+      $idSt = $row["stitch_compound_id"];
       $atcId = getAtcId($idSt);
 
       array_push($finalResults, $atcId);
@@ -45,7 +62,7 @@ $medicamentIndicatedList = getMedicamentListName($finalResults);
 
 
 // Function to get ATC id by Stitch ID
-function getAtcId($idStitch):string
+function getAtcId($idStitch)
 {
   // *:* is equivalent to telling solr to return all docs
   //echo str_replace("CID1","CIDm",$idStitch);
@@ -121,6 +138,64 @@ function getMedicamentListName($listIdAtc) {
 
 
 
-
-
  ?>
+
+ <!DOCTYPE html>
+ <html lang="en">
+   <head>
+     <!-- Required meta tags -->
+     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+     <!-- Bootstrap CSS -->
+     <link rel="stylesheet" href="css/bootstrap.min.css">
+     <link rel="stylesheet" href="css/jquery.dataTables.min.css">
+   </head>
+   <body>
+     <h1 style="text-align:center">List Meds</h1>
+
+
+
+
+   <table id="drugsSE" class="display" width="100%" cellspacing="0">
+     <thead>
+       <tr>
+         <th>Drugs causing side effects</th>
+
+       </tr>
+     </thead>
+     <tfoot>
+       <tr>
+         <th>Drugs causing side effects</th>
+        
+       </tr>
+     </tfoot>
+     <tbody>
+
+       <?php
+
+       // Tab ONIM
+       foreach ($medicamentIndicatedList as &$value) {
+
+         print("<tr>
+         <td>".$value."</td>
+         </tr>");
+       }
+       ?>
+
+     </tbody>
+   </table>
+
+
+     </body>
+
+     <script src="js/jquery-3.2.1.min.js"></script>
+     <script src="js/bootstrap.min.js"></script>
+     <script src="js\jquery.dataTables.min.js"></script>
+     <script type="text/javascript">
+     $(document).ready(function() {
+       $('#deseas').DataTable();
+       $('#drugsSE').DataTable();
+     } );
+     </script>
+ </html>
