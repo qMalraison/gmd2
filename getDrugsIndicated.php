@@ -167,7 +167,7 @@ function getMedicamentListName($listIdAtc) {
      <tfoot>
        <tr>
          <th>Drugs causing side effects</th>
-        
+         
        </tr>
      </tfoot>
      <tbody>

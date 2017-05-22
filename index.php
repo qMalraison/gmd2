@@ -1,5 +1,6 @@
 <?php
 error_reporting(0);
+ini_set('memory_limit', '1024M');
 // bootstrap.php
 require_once "vendor/autoload.php";
 require_once "PhpObo/LineReader.php";
@@ -18,7 +19,7 @@ $NomSymptome = $_GET["Symptome"];
 $listSynonym = array($NomSymptome);
 
 
-
+if (isset($_GET["Symptome"])) {
 require_once "obohpo.php";
 
 require_once "orpha.php";
@@ -27,7 +28,7 @@ require_once "omim.php";
 
 require_once "getDrugsSE.php";
 
-
+}
 
 
 ?>
@@ -59,12 +60,13 @@ require_once "getDrugsSE.php";
 
           <div class="col-12">
             <?php
+            if (isset($_GET["Symptome"])) {
               foreach ($listSynonym as &$value) {
               print("<span>
                       ".$value." //
                     </span>");
                 }
-
+              }
              ?>
           </div>
       </div>
@@ -99,6 +101,7 @@ require_once "getDrugsSE.php";
 
 
     // Tab ONIM
+    if (isset($_GET["Symptome"])) {
 
     foreach ($onimResult as &$value) {
 
@@ -122,7 +125,8 @@ require_once "getDrugsSE.php";
                 <td>".$listSynonym[0]."</td>
                 <td><a href=\"getDrugsIndicated.php?list=".urlencode(implode(",", $listSynonym))."\">link</a></td>
               </tr>");
-    }
+            }
+          }
 
      ?>
 
@@ -147,12 +151,14 @@ require_once "getDrugsSE.php";
       <?php
 
       // Tab ONIM
-      foreach ($medicamentSEList as &$value) {
+      if (isset($_GET["Symptome"])) {
+        foreach ($medicamentSEList as &$value) {
 
-        print("<tr>
-        <td>".$value."</td>
-        <td><a href=\"getDrugsIndicated.php?list=".urlencode(implode(",", $listSynonym))."\">link</a></td>
-        </tr>");
+          print("<tr>
+          <td>".$value."</td>
+          <td><a href=\"getDrugsIndicated.php?list=".urlencode(implode(",", $listSynonym))."\">link</a></td>
+          </tr>");
+        }
       }
       ?>
 
